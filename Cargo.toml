@@ -16,3 +16,4 @@ actix-web = { version = "3", features = ["openssl"] }
 openssl = "0.10.28"
 pretty_env_logger = "0.4.0"
 log = "0.4.11"
+lazy_static = "1.4.0"

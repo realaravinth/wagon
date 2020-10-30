@@ -1842,6 +1842,7 @@ version = "0.1.0"
 dependencies = [
  "actix-web",
  "futures",
+ "lazy_static",
  "log",
  "openssl",
  "pretty_env_logger",

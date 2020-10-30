@@ -17,6 +17,10 @@
 use pretty_env_logger;
 #[macro_use]
 extern crate log;
+
+#[macro_use]
+extern crate lazy_static;
+
 use serde::{Deserialize, Serialize};
 
 use std::collections::HashMap;
@@ -30,6 +34,7 @@ use actix_web::{
 };
 use futures::StreamExt;
 use openssl::ssl::{SslConnector, SslMethod};
+use std::env;
 use validator::Validate;
 use validator_derive::Validate;
 
@@ -51,6 +56,19 @@ struct SMTP2goData {
     pub failed: i32,
     failures: HashMap<String, String>,
     pub email_id: String,
+}
+
+lazy_static! {
+    pub static ref WAGON_SMTP_API_KEY: String =
+        env::var("WAGON_SMTP_API_KEY").expect("Please set WAGON_SMTP_API_KEY to your SMTP API key");
+    pub static ref DATABASE_URL: String =
+        env::var("DATABASE_URL").expect("Please set DATABASE_URL to your postgres instance");
+    pub static ref PORT: u32 = env::var("PORT")
+        .expect("Please set PORT to the port that you wish to listen to")
+        .parse()
+        .expect("Couldn't convert port into an integer");
+    pub static ref WAGON_RD_URL: String =
+        env::var("WAGON_RD_URL").expect("Please set WAGON_RD_URL to your Redis instance");
 }
 
 async fn send_verification(data: Email, client: &Client) -> Result<(), Error> {
@@ -88,7 +106,7 @@ async fn get_subscriber(
 async fn main() -> io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
-    let endpoint = "127.0.0.1:8080";
+    let endpoint = format!("0.0.0.0:{}", *PORT);
     println!("Starting server at: {:?}", endpoint);
     HttpServer::new(move || {
         App::new()
