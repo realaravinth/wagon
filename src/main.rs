@@ -21,46 +21,21 @@ extern crate log;
 #[macro_use]
 extern crate lazy_static;
 
-use serde::{Deserialize, Serialize};
-
-use std::collections::HashMap;
 use std::io;
 
 use actix_web::{
     client::{Client, Connector},
-    error::ErrorBadRequest,
     middleware::{Compress, Logger},
-    web::{self, BytesMut},
-    App, Error, HttpResponse, HttpServer,
+    web, App, HttpServer,
 };
 use database::pool::get_connection_pool;
-use futures::StreamExt;
 use openssl::ssl::{SslConnector, SslMethod};
 use std::env;
-use validator::Validate;
-use validator_derive::Validate;
 
 mod database;
-
-#[derive(Debug, Validate, Deserialize, Serialize)]
-struct Email {
-    #[validate(email)]
-    email_id: String,
-}
-
-#[derive(Debug, Deserialize)]
-struct SMTP2goResponse {
-    pub request_id: String,
-    pub data: SMTP2goData,
-}
-
-#[derive(Debug, Deserialize)]
-struct SMTP2goData {
-    pub succeeded: i32,
-    pub failed: i32,
-    failures: HashMap<String, String>,
-    pub email_id: String,
-}
+mod handlers;
+mod payload;
+mod utils;
 
 lazy_static! {
     pub static ref WAGON_SMTP_API_KEY: String =
@@ -79,39 +54,9 @@ lazy_static! {
         env::var("WAGON_RD_URL").expect("Please set WAGON_RD_URL to your Redis instance");
 }
 
-async fn send_verification(data: Email, client: &Client) -> Result<(), Error> {
-    data.validate().map_err(ErrorBadRequest)?;
-
-    let mut res = client
-        .post("https://api.smtp2go.com/v3/email/send")
-        .send_json(&data)
-        .await
-        .map_err(Error::from)?; // <- convert SendRequestError to an Error
-    debug!("{:?}", res);
-
-    if res.status() == 200 {
-        return Ok(());
-    }
-
-    let mut body = BytesMut::new();
-    while let Some(chunk) = res.next().await {
-        body.extend_from_slice(&chunk?);
-    }
-
-    let body: SMTP2goResponse = serde_json::from_slice(&body).unwrap();
-    Ok(())
-}
-
-async fn get_subscriber(
-    some_data: web::Json<Email>,
-    client: web::Data<Client>,
-) -> Result<HttpResponse, Error> {
-    send_verification(some_data.into_inner(), &client).await?;
-    Ok(HttpResponse::Ok().finish())
-}
-
 #[actix_web::main]
 async fn main() -> io::Result<()> {
+    use crate::handlers::*;
     std::env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
 
