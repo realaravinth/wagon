@@ -13,3 +13,97 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#![warn(rust_2018_idioms, elided_lifetimes_in_paths)]
+use pretty_env_logger;
+#[macro_use]
+extern crate log;
+use serde::{Deserialize, Serialize};
+
+use std::collections::HashMap;
+use std::io;
+
+use actix_web::{
+    client::{Client, Connector},
+    error::ErrorBadRequest,
+    web::{self, BytesMut},
+    App, Error, HttpResponse, HttpServer,
+};
+use futures::StreamExt;
+use openssl::ssl::{SslConnector, SslMethod};
+use validator::Validate;
+use validator_derive::Validate;
+
+#[derive(Debug, Validate, Deserialize, Serialize)]
+struct Email {
+    #[validate(email)]
+    email_id: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct SMTP2goResponse {
+    pub request_id: String,
+    pub data: SMTP2goData,
+}
+
+#[derive(Debug, Deserialize)]
+struct SMTP2goData {
+    pub succeeded: i32,
+    pub failed: i32,
+    failures: HashMap<String, String>,
+    pub email_id: String,
+}
+
+async fn send_verification(data: Email, client: &Client) -> Result<(), Error> {
+    data.validate().map_err(ErrorBadRequest)?;
+
+    let mut res = client
+        .post("https://api.smtp2go.com/v3/email/send")
+        .send_json(&data)
+        .await
+        .map_err(Error::from)?; // <- convert SendRequestError to an Error
+    debug!("{:?}", res);
+
+    if res.status() == 200 {
+        return Ok(());
+    }
+
+    let mut body = BytesMut::new();
+    while let Some(chunk) = res.next().await {
+        body.extend_from_slice(&chunk?);
+    }
+
+    let body: SMTP2goResponse = serde_json::from_slice(&body).unwrap();
+    Ok(())
+}
+
+async fn get_subscriber(
+    some_data: web::Json<Email>,
+    client: web::Data<Client>,
+) -> Result<HttpResponse, Error> {
+    send_verification(some_data.into_inner(), &client).await?;
+    Ok(HttpResponse::Ok().finish())
+}
+
+#[actix_web::main]
+async fn main() -> io::Result<()> {
+    std::env::set_var("RUST_LOG", "actix_web=info");
+    pretty_env_logger::init();
+    let endpoint = "127.0.0.1:8080";
+    println!("Starting server at: {:?}", endpoint);
+    HttpServer::new(move || {
+        App::new()
+            .data(
+                Client::builder()
+                    .connector(
+                        Connector::new()
+                            .ssl(SslConnector::builder(SslMethod::tls()).unwrap().build())
+                            .finish(),
+                    )
+                    .finish(),
+            )
+            .service(web::resource("/join").route(web::post().to(get_subscriber)))
+    })
+    .bind(endpoint)?
+    .run()
+    .await
+}

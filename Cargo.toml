@@ -7,10 +7,12 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "3.1"
-env_logger = "0.7"
 futures = "0.3.1"
 serde = { version = "1.0.43", features = ["derive"] }
 serde_json = "1.0.16"
 validator = "0.10"
 validator_derive = "0.10"
+actix-web = { version = "3", features = ["openssl"] }
+openssl = "0.10.28"
+pretty_env_logger = "0.4.0"
+log = "0.4.11"
