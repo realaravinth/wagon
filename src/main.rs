@@ -21,6 +21,9 @@ extern crate log;
 #[macro_use]
 extern crate lazy_static;
 
+#[macro_use]
+extern crate diesel;
+
 use std::io;
 
 use actix_web::{
@@ -28,14 +31,16 @@ use actix_web::{
     middleware::{Compress, Logger},
     web, App, HttpServer,
 };
-use database::pool::get_connection_pool;
 use openssl::ssl::{SslConnector, SslMethod};
 use std::env;
 
 mod database;
 mod handlers;
 mod payload;
+mod schema;
 mod utils;
+
+use database::pool::get_connection_pool;
 
 lazy_static! {
     pub static ref WAGON_SMTP_API_KEY: String =
