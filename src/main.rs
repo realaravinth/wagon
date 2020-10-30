@@ -29,14 +29,18 @@ use std::io;
 use actix_web::{
     client::{Client, Connector},
     error::ErrorBadRequest,
+    middleware::{Compress, Logger},
     web::{self, BytesMut},
     App, Error, HttpResponse, HttpServer,
 };
+use database::pool::get_connection_pool;
 use futures::StreamExt;
 use openssl::ssl::{SslConnector, SslMethod};
 use std::env;
 use validator::Validate;
 use validator_derive::Validate;
+
+mod database;
 
 #[derive(Debug, Validate, Deserialize, Serialize)]
 struct Email {
@@ -63,6 +67,10 @@ lazy_static! {
         env::var("WAGON_SMTP_API_KEY").expect("Please set WAGON_SMTP_API_KEY to your SMTP API key");
     pub static ref DATABASE_URL: String =
         env::var("DATABASE_URL").expect("Please set DATABASE_URL to your postgres instance");
+    pub static ref WAGON_PG_POOL_SIZE: u32 = env::var("WAGON_PG_POOL_SIZE")
+        .expect("Please set WAGON_PG_POOL_SIZE to your postgres instance")
+        .parse()
+        .expect("Couldn't convert WAGON_PG_POOL_SIZE to integer");
     pub static ref PORT: u32 = env::var("PORT")
         .expect("Please set PORT to the port that you wish to listen to")
         .parse()
@@ -106,10 +114,17 @@ async fn get_subscriber(
 async fn main() -> io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
+
+    let database_connection_pool = get_connection_pool(&DATABASE_URL);
+
     let endpoint = format!("0.0.0.0:{}", *PORT);
     println!("Starting server at: {:?}", endpoint);
+
     HttpServer::new(move || {
         App::new()
+            .data(database_connection_pool.clone())
+            .wrap(Compress::default())
+            .wrap(Logger::default())
             .data(
                 Client::builder()
                     .connector(

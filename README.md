@@ -27,6 +27,7 @@ Wagon expects the following environment variables to be set:
 | ------------- |-------------| -----|
 | `WAGON_SMTP_API_KEY`| API key | API key of your SMTP provider* |
 | `DATABASE_URL`| Postgres database url |   database url in `postgres://username:password@host/database_name` format |
+| `WAGON_PG_POOL_SIZE`| integer|  postgres database connection pool size |
 | `WAGON_RD_URL` | Redis URL      |    Redis database URL |
 
 

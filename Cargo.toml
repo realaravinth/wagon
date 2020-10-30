@@ -17,3 +17,5 @@ openssl = "0.10.28"
 pretty_env_logger = "0.4.0"
 log = "0.4.11"
 lazy_static = "1.4.0"
+diesel = { version = "1.4", features = ["postgres", "uuidv07", "chrono", "r2d2"] }
+r2d2 = "0.8.9"
