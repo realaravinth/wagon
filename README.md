@@ -1,6 +1,9 @@
 [![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
 # Wagon --- an independent mailing list manager
 
+In Wagon, organisations can advertise mailing list and people can
+subscribe/unsubscribe to them.
+
 ### How to build:
 
 * Install Cargo using [rustup](https://rustup.rs/) with:
@@ -15,7 +18,7 @@ $ git clone https://github.com/realaravinth/wagon
 
 * Build with Cargo:
 ``` 
-$ cd auth-backend && cargo build
+$ cd wagon && cargo build
 ```
 
 ### Usage:
