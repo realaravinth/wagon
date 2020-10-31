@@ -14,8 +14,8 @@
 --  You should have received a copy of the GNU Affero General Public License
 --  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-CREATE TABLE organisations (
-     organisation_name  VARCHAR  UNIQUE PRIMARY KEY NOT NULL,
-	 email VARCHAR NOT NULL,
-	 description VARCHAR NOT NULL
+CREATE TABLE lists (
+     name  VARCHAR  UNIQUE PRIMARY KEY NOT NULL,
+	 description VARCHAR NOT NULL,
+	 organisation_name VARCHAR REFERENCES organisations(organisation_name)
 )

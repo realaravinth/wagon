@@ -29,6 +29,14 @@ pub struct Subscribers {
 #[table_name = "organisations"]
 pub struct Organisations {
     pub email: String,
+    pub organisation_name: String,
+    pub description: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
+#[table_name = "lists"]
+pub struct Lists {
     pub name: String,
     pub description: String,
+    pub organisation_name: String,
 }
