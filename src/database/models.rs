@@ -29,6 +29,7 @@ pub struct Subscribers {
 #[table_name = "organisations"]
 pub struct Organisations {
     pub email: String,
+    pub organisation_username: String,
     pub organisation_name: String,
     pub password: String,
     pub description: String,

@@ -17,6 +17,9 @@ validator_derive = "0.10"
 
 actix-web = { version = "3", features = ["openssl"] }
 actix-http = "2.1.0"
+actix-identity = "0.3.1"
+actix-session = "0.4.0"
+actix-rt = "1"
 openssl = "0.10.28"
 
 pretty_env_logger = "0.4.0"

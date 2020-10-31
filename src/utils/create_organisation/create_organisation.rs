@@ -18,18 +18,18 @@ use unicode_normalization::UnicodeNormalization;
 
 use super::hashify::create_hash;
 use crate::errors::ServiceResult;
-use crate::payload::organisation::creds::Creds;
+use crate::payload::organisation::Creds;
 use crate::utils::filters::{beep, filter, forbidden};
 
 pub fn create_new_organisation(creds: Creds) -> ServiceResult<Creds> {
-    let normalised_username = &creds.name.to_lowercase().nfc().collect::<String>();
+    let normalised_username = &creds.username.to_lowercase().nfc().collect::<String>();
     filter(&normalised_username)?;
     forbidden(&normalised_username)?;
 
     beep(&normalised_username)?;
 
     let hash = create_hash(&creds.password)?;
-    Ok(Creds::new(&normalised_username, &hash))
+    Ok(Creds::new(&normalised_username, &creds.name, &hash))
 }
 
 #[cfg(test)]
@@ -39,11 +39,13 @@ mod tests {
     use crate::errors::*;
     #[test]
     fn utils_create_new_organisation() {
-        let creds = create_new_organisation(Creds::new("Realaravinth", "password")).unwrap();
-        let profanity = create_new_organisation(Creds::new("fuck", "password"));
-        let forbidden_creds = create_new_organisation(Creds::new(".htaccessasnc", "password"));
+        let creds =
+            create_new_organisation(Creds::new("Realaravinth", "sdfa", "password")).unwrap();
+        let profanity = create_new_organisation(Creds::new("fuck", "asdfa", "password"));
+        let forbidden_creds =
+            create_new_organisation(Creds::new(".htaccessasnc", "dsfasf", "password"));
 
-        assert_eq!(creds.name, "realaravinth");
+        assert_eq!(creds.username, "realaravinth");
         assert_eq!(profanity, Err(ServiceError::CharError));
         assert_eq!(forbidden_creds, Err(ServiceError::CharError));
     }

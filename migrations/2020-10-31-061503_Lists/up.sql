@@ -17,5 +17,5 @@
 CREATE TABLE lists (
      name  VARCHAR  UNIQUE PRIMARY KEY NOT NULL,
 	 description VARCHAR NOT NULL,
-	 organisation_name VARCHAR REFERENCES organisations(organisation_name)
+	 organisation_name VARCHAR UNIQUE REFERENCES organisations(organisation_name)
 )

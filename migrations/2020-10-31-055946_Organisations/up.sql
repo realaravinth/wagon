@@ -15,7 +15,8 @@
 --  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 CREATE TABLE organisations (
-     organisation_name  VARCHAR  UNIQUE PRIMARY KEY NOT NULL,
+     organisation_username  VARCHAR  UNIQUE PRIMARY KEY NOT NULL,
+     organisation_name  VARCHAR  UNIQUE NOT NULL,
 	 email VARCHAR NOT NULL,
 	 password VARCHAR NOT NULL,
 	 description VARCHAR NOT NULL

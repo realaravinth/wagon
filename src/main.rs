@@ -38,6 +38,7 @@ mod database;
 mod errors;
 mod handlers;
 mod payload;
+mod routes;
 mod schema;
 mod utils;
 
@@ -70,7 +71,7 @@ lazy_static! {
 #[actix_web::main]
 #[cfg(not(tarpaulin_include))]
 async fn main() -> io::Result<()> {
-    use crate::handlers::*;
+    use crate::routes::routes;
     env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
 
@@ -93,7 +94,7 @@ async fn main() -> io::Result<()> {
                     )
                     .finish(),
             )
-            .service(web::resource("/join").route(web::post().to(get_subscriber)))
+            .configure(routes)
     })
     .bind(endpoint)?
     .run()

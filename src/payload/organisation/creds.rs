@@ -17,13 +17,15 @@
 use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Creds {
+    pub username: String,
     pub name: String,
     pub password: String,
 }
 
 impl Creds {
-    pub fn new(name: &str, password: &str) -> Creds {
+    pub fn new(username: &str, name: &str, password: &str) -> Creds {
         Creds {
+            username: username.to_owned(),
             name: name.to_owned(),
             password: password.to_owned(),
         }
