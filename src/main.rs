@@ -68,9 +68,10 @@ lazy_static! {
 }
 
 #[actix_web::main]
+#[cfg(not(tarpaulin_include))]
 async fn main() -> io::Result<()> {
     use crate::handlers::*;
-    std::env::set_var("RUST_LOG", "actix_web=info");
+    env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
 
     let database_connection_pool = get_connection_pool(&DATABASE_URL);
@@ -97,4 +98,27 @@ async fn main() -> io::Result<()> {
     .bind(endpoint)?
     .run()
     .await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn set_vars() {
+        env::set_var("WAGON_SMTP_API_KEY", "testing");
+        env::set_var("DATABASE_URL", "testing");
+        env::set_var("WAGON_PG_POOL_SIZE", "20");
+        env::set_var("PORT", "20");
+        env::set_var("WAGON_RD_URL", "testing");
+    }
+
+    #[test]
+    fn test_env_vars() {
+        set_vars();
+        assert_eq!(*WAGON_RD_URL, "testing");
+        assert_eq!(*WAGON_SMTP_API_KEY, "testing");
+        assert_eq!(*DATABASE_URL, "testing");
+        assert_eq!(*PORT, 20);
+        assert_eq!(*WAGON_PG_POOL_SIZE, 20);
+    }
 }

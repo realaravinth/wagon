@@ -1,6 +1,6 @@
 [![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
 [![Build Status](https://travis-ci.com/realaravinth/wagon.svg?branch=master)](https://travis-ci.com/realaravinth/wagon)
-[![codecov](https://codecov.io/gh/realaravinth/wagon/branch/master/graph/badge.svg)](https://codecov.io/gh/wagon/wagon)
+[![codecov](https://codecov.io/gh/realaravinth/wagon/branch/master/graph/badge.svg)](https://codecov.io/gh/realaravinth/wagon)
 # Wagon --- an independent mailing list manager
 
 In Wagon, organisations can advertise mailing list and people can

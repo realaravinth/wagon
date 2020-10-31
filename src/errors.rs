@@ -23,7 +23,6 @@ use serde::{Deserialize, Serialize};
 use std::convert::From;
 
 #[derive(Debug, PartialEq, Fail)]
-#[cfg(not(tarpaulin_include))]
 pub enum ServiceError {
     #[fail(display = "some characters are not permitted")] //405j
     CharError,
@@ -42,7 +41,6 @@ pub enum ServiceError {
 }
 
 #[derive(Serialize, Deserialize)]
-#[cfg(not(tarpaulin_include))]
 struct ErrorToResponse {
     error: String,
 }

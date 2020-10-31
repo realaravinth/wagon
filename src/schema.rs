@@ -24,8 +24,4 @@ table! {
 
 joinable!(lists -> organisations (organisation_name));
 
-allow_tables_to_appear_in_same_query!(
-    lists,
-    organisations,
-    subscribers,
-);
+allow_tables_to_appear_in_same_query!(lists, organisations, subscribers,);
