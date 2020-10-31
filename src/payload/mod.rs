@@ -15,4 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pub mod email;
+pub mod organisation;
 pub mod smtp_payload;

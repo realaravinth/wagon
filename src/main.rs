@@ -17,29 +17,31 @@
 use pretty_env_logger;
 #[macro_use]
 extern crate log;
-
 #[macro_use]
 extern crate lazy_static;
-
 #[macro_use]
 extern crate diesel;
-
-use std::io;
 
 use actix_web::{
     client::{Client, Connector},
     middleware::{Compress, Logger},
     web, App, HttpServer,
 };
+
 use openssl::ssl::{SslConnector, SslMethod};
+use regex::Regex;
+
 use std::env;
+use std::io;
 
 mod database;
+mod errors;
 mod handlers;
 mod payload;
 mod schema;
 mod utils;
 
+use crate::utils::filters::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
 use database::pool::get_connection_pool;
 
 lazy_static! {
@@ -57,6 +59,12 @@ lazy_static! {
         .expect("Couldn't convert port into an integer");
     pub static ref WAGON_RD_URL: String =
         env::var("WAGON_RD_URL").expect("Please set WAGON_RD_URL to your Redis instance");
+    pub static ref RE_BLACKLIST: Regex =
+        Regex::new(BLACKLIST).expect("couldn't setup blacklist list filter");
+    pub static ref RE_PROFAINITY: Regex =
+        Regex::new(PROFAINITY).expect("coudln't setup profainity filter");
+    pub static ref RE_USERNAME_CASE_MAPPED: Regex =
+        Regex::new(USERNAME_CASE_MAPPED).expect("coudln't setup username case mapped filter");
 }
 
 #[actix_web::main]

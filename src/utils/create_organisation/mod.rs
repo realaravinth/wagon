@@ -13,7 +13,7 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+mod create_organisation;
+mod hashify;
 
-pub(crate) mod create_organisation;
-pub(crate) mod filters;
-pub mod send_email;
+pub use create_organisation::create_new_organisation;

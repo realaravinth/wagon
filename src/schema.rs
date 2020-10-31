@@ -10,6 +10,7 @@ table! {
     organisations (organisation_name) {
         organisation_name -> Varchar,
         email -> Varchar,
+        password -> Varchar,
         description -> Varchar,
     }
 }

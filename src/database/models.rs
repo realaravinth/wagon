@@ -30,6 +30,7 @@ pub struct Subscribers {
 pub struct Organisations {
     pub email: String,
     pub organisation_name: String,
+    pub password: String,
     pub description: String,
 }
 

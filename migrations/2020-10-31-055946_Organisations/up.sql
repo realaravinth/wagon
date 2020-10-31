@@ -17,5 +17,6 @@
 CREATE TABLE organisations (
      organisation_name  VARCHAR  UNIQUE PRIMARY KEY NOT NULL,
 	 email VARCHAR NOT NULL,
+	 password VARCHAR NOT NULL,
 	 description VARCHAR NOT NULL
 )

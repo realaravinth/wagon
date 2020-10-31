@@ -14,6 +14,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-pub(crate) mod create_organisation;
-pub(crate) mod filters;
-pub mod send_email;
+use crate::errors::{ServiceError, ServiceResult};
+use crate::RE_PROFAINITY;
+
+pub fn beep(target: &str) -> ServiceResult<()> {
+    if RE_PROFAINITY.is_match(&target) {
+        Err(ServiceError::CharError)
+    } else {
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn profainity_ture1() {
+        let illegal = "fuck";
+        let illegal2 = "pundapayale";
+
+        let legal = "hey";
+        assert_eq!(beep(legal), Ok(()));
+        assert_eq!(beep(illegal), Err(ServiceError::CharError));
+        assert_eq!(beep(illegal2), Err(ServiceError::CharError));
+    }
+}

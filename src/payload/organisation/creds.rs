@@ -14,6 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-pub(crate) mod create_organisation;
-pub(crate) mod filters;
-pub mod send_email;
+use serde::{Deserialize, Serialize};
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+pub struct Creds {
+    pub name: String,
+    pub password: String,
+}
+
+impl Creds {
+    pub fn new(name: &str, password: &str) -> Creds {
+        Creds {
+            name: name.to_owned(),
+            password: password.to_owned(),
+        }
+    }
+}

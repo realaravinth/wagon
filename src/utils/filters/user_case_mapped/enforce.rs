@@ -13,7 +13,25 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+use crate::errors::{ServiceError, ServiceResult};
+use crate::RE_USERNAME_CASE_MAPPED;
 
-pub(crate) mod create_organisation;
-pub(crate) mod filters;
-pub mod send_email;
+pub fn filter(target: &str) -> ServiceResult<()> {
+    if RE_USERNAME_CASE_MAPPED.is_match(target) {
+        Ok(())
+    } else {
+        Err(ServiceError::CharError)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_usercase_mapped() {
+        let legal = "\u{0065}";
+        let illegal = "\u{0000}";
+        assert_eq!(filter(legal), Ok(()));
+        assert_eq!(filter(illegal), Err(ServiceError::CharError));
+    }
+}
