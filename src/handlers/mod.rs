@@ -13,9 +13,8 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+mod auth;
+mod verify;
 
-mod login;
-mod register;
-
-pub use login::LoginCreds;
-pub use register::RegisterCreds;
+pub use auth::{sign_in, sign_out, sign_up};
+pub use verify::get_subscriber;

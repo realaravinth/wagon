@@ -21,7 +21,6 @@ before_script: |
   fi
 
 script:
-- cargo clean
 - cargo build
 - cargo test
 

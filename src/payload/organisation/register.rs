@@ -13,25 +13,40 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-use crate::errors::{ServiceError, ServiceResult};
-use crate::RE_USERNAME_CASE_MAPPED;
 
-pub fn filter(target: &str) -> ServiceResult<()> {
-    if RE_USERNAME_CASE_MAPPED.is_match(target) {
-        Ok(())
-    } else {
-        Err(ServiceError::UsernameError)
+use serde::{Deserialize, Serialize};
+use validator::Validate;
+use validator_derive::Validate;
+
+use crate::errors::*;
+
+#[derive(Debug, PartialEq, Validate, Deserialize, Serialize)]
+pub struct RegisterCreds {
+    pub username: String,
+    #[validate(email)]
+    pub email_id: String,
+    pub password: String,
+}
+
+impl RegisterCreds {
+    pub fn new(username: &str, email_id: &str, password: &str) -> ServiceResult<RegisterCreds> {
+        let new_creds = RegisterCreds {
+            username: username.to_owned(),
+            email_id: email_id.into(),
+            password: password.to_owned(),
+        };
+        new_creds.validate()?;
+        Ok(new_creds)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
-    fn test_usercase_mapped() {
-        let legal = "\u{0065}";
-        let illegal = "\u{0000}";
-        assert_eq!(filter(legal), Ok(()));
-        assert_eq!(filter(illegal), Err(ServiceError::UsernameError));
+    fn utils_register_email_err() {
+        let email_err = RegisterCreds::new("sdfasdfc", "sdfada", "password");
+        assert_eq!(email_err, Err(ServiceError::NotAnEmail));
     }
 }

@@ -19,13 +19,14 @@ use actix_web::{error::ResponseError, http::header, http::StatusCode, HttpRespon
 use diesel::result::Error as DBError;
 use failure::Fail;
 use serde::{Deserialize, Serialize};
+use validator::ValidationErrors;
 
 use std::convert::From;
 
 #[derive(Debug, PartialEq, Fail)]
 pub enum ServiceError {
     #[fail(display = "some characters are not permitted")] //405j
-    CharError,
+    UsernameError,
     #[fail(display = "organisation exists")] //405
     OrganisationExists,
     #[fail(display = "invalid credentials")]
@@ -38,6 +39,8 @@ pub enum ServiceError {
     BadRequest,
     #[fail(display = "Unable to connect to DB")]
     UnableToConnectToDb,
+    #[fail(display = "The value you entered for email is not an email")] //405j
+    NotAnEmail,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -56,13 +59,14 @@ impl ResponseError for ServiceError {
 
     fn status_code(&self) -> StatusCode {
         match *self {
-            ServiceError::CharError => StatusCode::METHOD_NOT_ALLOWED,
+            ServiceError::UsernameError => StatusCode::METHOD_NOT_ALLOWED,
             ServiceError::OrganisationExists => StatusCode::METHOD_NOT_ALLOWED,
             ServiceError::AuthorizationRequired => StatusCode::UNAUTHORIZED,
             ServiceError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             ServiceError::BadRequest => StatusCode::BAD_REQUEST,
             ServiceError::Timeout => StatusCode::GATEWAY_TIMEOUT,
             ServiceError::UnableToConnectToDb => StatusCode::INTERNAL_SERVER_ERROR,
+            ServiceError::NotAnEmail => StatusCode::METHOD_NOT_ALLOWED,
         }
     }
 }
@@ -87,6 +91,12 @@ impl From<actix_http::Error> for ServiceError {
 impl From<argon2::Error> for ServiceError {
     fn from(error: argon2::Error) -> ServiceError {
         ServiceError::InternalServerError
+    }
+}
+
+impl From<ValidationErrors> for ServiceError {
+    fn from(error: ValidationErrors) -> ServiceError {
+        ServiceError::NotAnEmail
     }
 }
 

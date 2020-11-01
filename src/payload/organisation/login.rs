@@ -1,5 +1,5 @@
 // Wagon is an independent mailing list manager
-// Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
+// Csopyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -16,17 +16,15 @@
 
 use serde::{Deserialize, Serialize};
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
-pub struct Creds {
+pub struct LoginCreds {
     pub username: String,
-    pub name: String,
     pub password: String,
 }
 
-impl Creds {
-    pub fn new(username: &str, name: &str, password: &str) -> Creds {
-        Creds {
+impl LoginCreds {
+    pub fn new(username: &str, password: &str) -> LoginCreds {
+        LoginCreds {
             username: username.to_owned(),
-            name: name.to_owned(),
             password: password.to_owned(),
         }
     }
