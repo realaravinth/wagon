@@ -1,12 +1,4 @@
 table! {
-    lists (name) {
-        name -> Varchar,
-        description -> Varchar,
-        organisation_name -> Nullable<Varchar>,
-    }
-}
-
-table! {
     organisations (organisation_username) {
         organisation_username -> Varchar,
         organisation_name -> Nullable<Varchar>,
@@ -25,7 +17,6 @@ table! {
 }
 
 allow_tables_to_appear_in_same_query!(
-    lists,
     organisations,
     subscribers,
 );

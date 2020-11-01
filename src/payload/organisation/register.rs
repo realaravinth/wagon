@@ -20,7 +20,7 @@ use validator_derive::Validate;
 
 use crate::errors::*;
 
-#[derive(Debug, PartialEq, Validate, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Validate, Deserialize, Serialize)]
 pub struct RegisterCreds {
     pub username: String,
     #[validate(email)]

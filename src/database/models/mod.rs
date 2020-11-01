@@ -14,31 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use serde::{Deserialize, Serialize};
+mod lists;
+mod organisations;
+mod subscribers;
 
-use crate::schema::*;
-
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "subscribers"]
-pub struct Subscribers {
-    pub email: String,
-    pub name: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "organisations"]
-pub struct Organisations {
-    pub email: String,
-    pub organisation_username: String,
-    pub organisation_name: String,
-    pub password: String,
-    pub description: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "lists"]
-pub struct Lists {
-    pub name: String,
-    pub description: String,
-    pub organisation_name: String,
-}
+pub use lists::Lists;
+pub use organisations::Organisations;
+pub use subscribers::Subscribers;

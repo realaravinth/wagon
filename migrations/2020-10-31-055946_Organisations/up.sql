@@ -16,8 +16,9 @@
 
 CREATE TABLE organisations (
      organisation_username  VARCHAR  UNIQUE PRIMARY KEY NOT NULL,
-     organisation_name  VARCHAR  UNIQUE NOT NULL,
+     organisation_name  VARCHAR  UNIQUE DEFAULT NULL,
 	 email VARCHAR NOT NULL,
 	 password VARCHAR NOT NULL,
-	 description VARCHAR NOT NULL
+	 description VARCHAR DEFAULT NULL,
+     email_verified BOOLEAN DEFAULT NULL
 )

@@ -1,5 +1,5 @@
 // Wagon is an independent mailing list manager
-// Csopyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
+// Copyright (C) 2020  Aravinth Manivannan <realaravinth@batsense.net>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -14,19 +14,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use serde::{Deserialize, Serialize};
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
-pub struct LoginCreds {
-    pub username: String,
-    pub password: String,
-}
-
-impl LoginCreds {
-    #[cfg(not(tarpaulin_include))]
-    pub fn new(username: &str, password: &str) -> LoginCreds {
-        LoginCreds {
-            username: username.to_owned(),
-            password: password.to_owned(),
-        }
-    }
-}
+mod register_org;
