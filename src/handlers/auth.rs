@@ -50,7 +50,13 @@ mod tests {
 
     #[actix_rt::test]
     async fn test_signup_success() {
-        let creds = RegisterCreds::new("we", "batman@we.net", "shhh").unwrap();
+        let creds = RegisterCreds::new()
+            .set_password("password")
+            .set_username("Realaravinth")
+            .set_email("batman@we.net")
+            .unwrap()
+            .build();
+
         let resp = sign_up(Json(creds)).await.unwrap();
         assert_eq!(resp.status(), http::StatusCode::OK);
     }

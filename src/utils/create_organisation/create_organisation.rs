@@ -29,7 +29,12 @@ pub fn create_new_organisation(creds: RegisterCreds) -> ServiceResult<RegisterCr
     beep(&normalised_username)?;
 
     let hash = create_hash(&creds.password)?;
-    let new_creds = RegisterCreds::new(&normalised_username, &creds.email_id, &hash)?;
+    let new_creds = RegisterCreds::new()
+        .set_username(&normalised_username)
+        .set_password(&hash)
+        .set_email(&creds.email_id)?
+        .build();
+
     Ok(new_creds)
 }
 
@@ -40,27 +45,41 @@ mod tests {
     use crate::errors::*;
     #[test]
     fn utils_create_new_organisation() {
-        let creds = create_new_organisation(
-            RegisterCreds::new("Realaravinth", "sdfa@gmail.com", "password").unwrap(),
-        )
-        .unwrap();
-        let profane_creds =
-            RegisterCreds::new("fuck", "aasdfa@gmail.com", "password").unwrap();
-        let profanity = create_new_organisation(profane_creds);
+        let registered_creds = RegisterCreds::new()
+            .set_password("password")
+            .set_username("Realaravinth")
+            .set_email("batman@we.net")
+            .unwrap()
+            .build();
 
-        let forbidden_creds =
-            RegisterCreds::new(".htaccessasnc", "sdfada@gmail.com", "password").unwrap();
-        let forbidden = create_new_organisation(forbidden_creds);
-
-        assert_eq!(creds.username, "realaravinth");
-        assert_eq!(profanity, Err(ServiceError::UsernameError));
-        assert_eq!(forbidden, Err(ServiceError::UsernameError));
+        let org = create_new_organisation(registered_creds).unwrap();
+        assert_eq!(org.username, "realaravinth");
     }
 
     #[test]
-    fn reg_def() {
-        let a: RegisterCreds = Default::default();
-        println!("{:?}", a);
-        panic!()
+    fn utils_create_new_profane_organisation() {
+        let profane_creds = RegisterCreds::new()
+            .set_password("password")
+            .set_username("fuck")
+            .set_email("batman@we.net")
+            .unwrap()
+            .build();
+
+        let profane_org = create_new_organisation(profane_creds);
+        assert_eq!(profane_org, Err(ServiceError::UsernameError));
+    }
+
+    #[test]
+    fn utils_create_new_forbidden_organisation() {
+        let forbidden_creds = RegisterCreds::new()
+            .set_password("password")
+            .set_username("htaccessasnc")
+            .set_email("batman@we.net")
+            .unwrap()
+            .build();
+
+        let forbidden_org = create_new_organisation(forbidden_creds);
+
+        assert_eq!(forbidden_org, Err(ServiceError::UsernameError));
     }
 }

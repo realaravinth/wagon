@@ -66,11 +66,13 @@ mod tests {
     fn models_organisations() {
         let description = "Free software alternatives to google services";
         let organisation_name = "Shuttlecraft";
-        let rcreds = create_new_organisation(
-            RegisterCreds::new("Shuttlecraft", "root@shuttlecraft.io", "password")
-                .unwrap(),
-        )
-        .unwrap();
+        let creds = RegisterCreds::new()
+            .set_email("root@shuttlecraft.io")
+            .unwrap()
+            .set_password("password")
+            .set_username("Shuttlecraft")
+            .build();
+        let rcreds = create_new_organisation(creds).unwrap();
         let registered_creds = rcreds.clone();
 
         let mut org: Organisations = rcreds.into();

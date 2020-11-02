@@ -29,30 +29,29 @@ pub struct RegisterCreds {
 }
 
 impl RegisterCreds {
-    pub fn new(
-        username: &str,
-        email_id: &str,
-        password: &str,
-    ) -> ServiceResult<RegisterCreds> {
-        let new_creds = RegisterCreds {
-            username: username.to_owned(),
-            email_id: email_id.into(),
-            password: password.to_owned(),
-        };
-        new_creds.validate()?;
-        Ok(new_creds)
+    pub fn new() -> Self {
+        let registered_creds: RegisterCreds = Default::default();
+        registered_creds
     }
 
-    fn set_username(&mut self, username: &str) {
-        self.username = username.to_owned();
+    pub fn set_username<'a>(&'a mut self, username: &str) -> &'a mut Self {
+        self.username = username.trim().to_owned();
+        self
     }
 
-    fn set_email(&mut self, email_id: &str) {
-        self.email_id = email_id.to_owned();
+    pub fn set_email<'a>(&'a mut self, email_id: &str) -> ServiceResult<&'a mut Self> {
+        self.email_id = email_id.trim().to_owned();
+        self.validate()?;
+        Ok(self)
     }
 
-    fn set_passwordd(&mut self, password: &str) {
+    pub fn set_password<'a>(&'a mut self, password: &str) -> &'a mut Self {
         self.password = password.to_owned();
+        self
+    }
+
+    pub fn build(&mut self) -> Self {
+        self.to_owned()
     }
 }
 
@@ -61,8 +60,28 @@ mod tests {
     use super::*;
 
     #[test]
+    fn utils_register_builer() {
+        let registered_creds = RegisterCreds::new()
+            .set_password("password")
+            .set_username("realaravinth")
+            .set_email("batman@we.net")
+            .unwrap()
+            .build();
+
+        assert_eq!(registered_creds.username, "realaravinth");
+        assert_eq!(registered_creds.password, "password");
+        assert_eq!(registered_creds.email_id, "batman@we.net");
+    }
+
+    #[test]
     fn utils_register_email_err() {
-        let email_err = RegisterCreds::new("sdfasdfc", "sdfada", "password");
-        assert_eq!(email_err, Err(ServiceError::NotAnEmail));
+        let mut email_err = RegisterCreds::new()
+            .set_password("password")
+            .set_username("realaravinth")
+            .build();
+        assert_eq!(
+            email_err.set_email("sdfasdf"),
+            Err(ServiceError::NotAnEmail)
+        );
     }
 }
