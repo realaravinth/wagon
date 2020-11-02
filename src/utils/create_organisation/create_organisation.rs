@@ -44,7 +44,8 @@ mod tests {
             RegisterCreds::new("Realaravinth", "sdfa@gmail.com", "password").unwrap(),
         )
         .unwrap();
-        let profane_creds = RegisterCreds::new("fuck", "aasdfa@gmail.com", "password").unwrap();
+        let profane_creds =
+            RegisterCreds::new("fuck", "aasdfa@gmail.com", "password").unwrap();
         let profanity = create_new_organisation(profane_creds);
 
         let forbidden_creds =

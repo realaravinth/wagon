@@ -19,14 +19,19 @@ use actix_web::{web, web::Json, Error, HttpResponse, Responder};
 
 use crate::errors::*;
 use crate::payload::organisation::{LoginCreds, RegisterCreds};
-use crate::utils::{create_organisation::create_new_organisation, send_email::send_verification};
+use crate::utils::{
+    create_organisation::create_new_organisation, send_email::send_verification,
+};
 
 pub async fn sign_up(creds: Json<RegisterCreds>) -> ServiceResult<HttpResponse> {
     let new_creds = create_new_organisation(creds.into_inner())?;
     Ok(HttpResponse::Ok().finish())
 }
 
-pub async fn sign_in(creds: web::Json<LoginCreds>, id: Identity) -> ServiceResult<impl Responder> {
+pub async fn sign_in(
+    creds: web::Json<LoginCreds>,
+    id: Identity,
+) -> ServiceResult<impl Responder> {
     unimplemented!();
     Ok(HttpResponse::Ok().finish())
 }

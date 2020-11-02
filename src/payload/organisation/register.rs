@@ -29,7 +29,11 @@ pub struct RegisterCreds {
 }
 
 impl RegisterCreds {
-    pub fn new(username: &str, email_id: &str, password: &str) -> ServiceResult<RegisterCreds> {
+    pub fn new(
+        username: &str,
+        email_id: &str,
+        password: &str,
+    ) -> ServiceResult<RegisterCreds> {
         let new_creds = RegisterCreds {
             username: username.to_owned(),
             email_id: email_id.into(),

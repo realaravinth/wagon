@@ -42,10 +42,10 @@ mod utils;
 use crate::utils::filters::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
 
 lazy_static! {
-    pub static ref WAGON_SMTP_API_KEY: String =
-        env::var("WAGON_SMTP_API_KEY").expect("Please set WAGON_SMTP_API_KEY to your SMTP API key");
-    pub static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").expect("Please set DATABASE_URL to your postgres instance");
+    pub static ref WAGON_SMTP_API_KEY: String = env::var("WAGON_SMTP_API_KEY")
+        .expect("Please set WAGON_SMTP_API_KEY to your SMTP API key");
+    pub static ref DATABASE_URL: String = env::var("DATABASE_URL")
+        .expect("Please set DATABASE_URL to your postgres instance");
     pub static ref WAGON_PG_POOL_SIZE: u32 = env::var("WAGON_PG_POOL_SIZE")
         .expect("Please set WAGON_PG_POOL_SIZE to your postgres instance")
         .parse()
@@ -54,14 +54,14 @@ lazy_static! {
         .expect("Please set PORT to the port that you wish to listen to")
         .parse()
         .expect("Couldn't convert port into an integer");
-    pub static ref WAGON_RD_URL: String =
-        env::var("WAGON_RD_URL").expect("Please set WAGON_RD_URL to your Redis instance");
+    pub static ref WAGON_RD_URL: String = env::var("WAGON_RD_URL")
+        .expect("Please set WAGON_RD_URL to your Redis instance");
     pub static ref RE_BLACKLIST: Regex =
         Regex::new(BLACKLIST).expect("couldn't setup blacklist list filter");
     pub static ref RE_PROFAINITY: Regex =
         Regex::new(PROFAINITY).expect("coudln't setup profainity filter");
-    pub static ref RE_USERNAME_CASE_MAPPED: Regex =
-        Regex::new(USERNAME_CASE_MAPPED).expect("coudln't setup username case mapped filter");
+    pub static ref RE_USERNAME_CASE_MAPPED: Regex = Regex::new(USERNAME_CASE_MAPPED)
+        .expect("coudln't setup username case mapped filter");
 }
 
 #[actix_web::main]
@@ -85,7 +85,9 @@ async fn main() -> io::Result<()> {
                 Client::builder()
                     .connector(
                         Connector::new()
-                            .ssl(SslConnector::builder(SslMethod::tls()).unwrap().build())
+                            .ssl(
+                                SslConnector::builder(SslMethod::tls()).unwrap().build(),
+                            )
                             .finish(),
                     )
                     .finish(),

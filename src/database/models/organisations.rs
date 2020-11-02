@@ -20,10 +20,10 @@ use crate::payload::organisation::RegisterCreds;
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Organisations {
-    pub email: String,
     pub organisation_username: String,
-    pub organisation_name: Option<String>,
+    pub email: String,
     pub password: String,
+    pub organisation_name: Option<String>,
     pub description: Option<String>,
     pub email_verified: Option<bool>,
 }
@@ -67,7 +67,8 @@ mod tests {
         let description = "Free software alternatives to google services";
         let organisation_name = "Shuttlecraft";
         let rcreds = create_new_organisation(
-            RegisterCreds::new("Shuttlecraft", "root@shuttlecraft.io", "password").unwrap(),
+            RegisterCreds::new("Shuttlecraft", "root@shuttlecraft.io", "password")
+                .unwrap(),
         )
         .unwrap();
         let registered_creds = rcreds.clone();
