@@ -43,15 +43,15 @@ impl From<RegisterCreds> for Organisations {
 }
 
 impl Organisations {
-    fn set_description(&mut self, description: &str) {
+    pub fn set_description(&mut self, description: &str) {
         self.description = Some(description.to_owned());
     }
 
-    fn set_organisation_name(&mut self, name: &str) {
+    pub fn set_organisation_name(&mut self, name: &str) {
         self.organisation_name = Some(name.to_owned());
     }
 
-    fn set_email_verified(&mut self) {
+    pub fn set_email_verified(&mut self) {
         self.email_verified = Some(true);
     }
 }
