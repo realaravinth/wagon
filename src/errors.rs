@@ -16,7 +16,7 @@
 
 use actix_http::ResponseBuilder;
 use actix_web::{error::ResponseError, http::header, http::StatusCode, HttpResponse};
-use diesel::result::Error as DBError;
+//use diesel::result::Error as DBError;
 use failure::Fail;
 use serde::{Deserialize, Serialize};
 use validator::ValidationErrors;
@@ -71,16 +71,16 @@ impl ResponseError for ServiceError {
     }
 }
 
-impl From<DBError> for ServiceError {
-    fn from(error: DBError) -> ServiceError {
-        // Right now we just care about UniqueViolation from diesel
-        // But this would be helpful to easily map errors as our app grows
-        match error {
-            DBError::DatabaseError(_kind, _info) => ServiceError::BadRequest,
-            _ => ServiceError::InternalServerError,
-        }
-    }
-}
+//impl From<DBError> for ServiceError {
+//    fn from(error: DBError) -> ServiceError {
+//        // Right now we just care about UniqueViolation from diesel
+//        // But this would be helpful to easily map errors as our app grows
+//        match error {
+//            DBError::DatabaseError(_kind, _info) => ServiceError::BadRequest,
+//            _ => ServiceError::InternalServerError,
+//        }
+//    }
+//}
 
 impl From<actix_http::Error> for ServiceError {
     fn from(error: actix_http::Error) -> ServiceError {

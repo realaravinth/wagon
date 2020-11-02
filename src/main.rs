@@ -19,8 +19,6 @@ use pretty_env_logger;
 extern crate log;
 #[macro_use]
 extern crate lazy_static;
-#[macro_use]
-extern crate diesel;
 
 use actix_web::{
     client::{Client, Connector},
@@ -39,11 +37,9 @@ mod errors;
 mod handlers;
 mod payload;
 mod routes;
-mod schema;
 mod utils;
 
 use crate::utils::filters::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
-use database::pool::get_connection_pool;
 
 lazy_static! {
     pub static ref WAGON_SMTP_API_KEY: String =
@@ -75,14 +71,14 @@ async fn main() -> io::Result<()> {
     env::set_var("RUST_LOG", "actix_web=info");
     pretty_env_logger::init();
 
-    let database_connection_pool = get_connection_pool(&DATABASE_URL);
+    //    let database_connection_pool = get_connection_pool(&DATABASE_URL);
 
     let endpoint = format!("0.0.0.0:{}", *PORT);
     println!("Starting server at: {:?}", endpoint);
 
     HttpServer::new(move || {
         App::new()
-            .data(database_connection_pool.clone())
+            //           .data(database_connection_pool.clone())
             .wrap(Compress::default())
             .wrap(Logger::default())
             .data(

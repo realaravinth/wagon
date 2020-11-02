@@ -16,10 +16,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::schema::*;
-
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "subscribers"]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Subscribers {
     pub email: String,
     pub name: String,

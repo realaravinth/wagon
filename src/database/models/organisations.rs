@@ -17,10 +17,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::payload::organisation::RegisterCreds;
-use crate::schema::*;
 
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize, Queryable, Insertable)]
-#[table_name = "organisations"]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Organisations {
     pub email: String,
     pub organisation_username: String,
