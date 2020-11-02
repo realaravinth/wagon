@@ -20,7 +20,7 @@ use validator_derive::Validate;
 
 use crate::errors::*;
 
-#[derive(Debug, Clone, PartialEq, Validate, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Validate, Deserialize, Serialize)]
 pub struct RegisterCreds {
     pub username: String,
     #[validate(email)]
@@ -41,6 +41,18 @@ impl RegisterCreds {
         };
         new_creds.validate()?;
         Ok(new_creds)
+    }
+
+    fn set_username(&mut self, username: &str) {
+        self.username = username.to_owned();
+    }
+
+    fn set_email(&mut self, email_id: &str) {
+        self.email_id = email_id.to_owned();
+    }
+
+    fn set_passwordd(&mut self, password: &str) {
+        self.password = password.to_owned();
     }
 }
 

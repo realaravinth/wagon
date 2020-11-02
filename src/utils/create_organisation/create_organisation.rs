@@ -56,4 +56,11 @@ mod tests {
         assert_eq!(profanity, Err(ServiceError::UsernameError));
         assert_eq!(forbidden, Err(ServiceError::UsernameError));
     }
+
+    #[test]
+    fn reg_def() {
+        let a: RegisterCreds = Default::default();
+        println!("{:?}", a);
+        panic!()
+    }
 }
