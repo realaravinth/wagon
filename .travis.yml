@@ -26,7 +26,7 @@ script:
 
 after_success: |
   if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
-     cargo tarpaulin --exclude-files src/schema.rs src/errors.rs -t 600 --out Xml
+     cargo tarpaulin --exclude-files src/errors.rs -t 600 --out Xml
      bash <(curl -s https://codecov.io/bash)
   fi
 notifications:
