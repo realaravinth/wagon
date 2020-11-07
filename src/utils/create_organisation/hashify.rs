@@ -15,9 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::errors::*;
-use argon2::{self, verify_encoded, Config};
+use argon2::{self, verify_encoded, Config, ThreadMode, Variant, Version};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
+
+static ARGON2_CONFIG: &'static Config = &Config {
+    variant: Variant::Argon2i,
+    version: Version::Version13,
+    mem_cost: 656,
+    time_cost: 5,
+    lanes: 1,
+    thread_mode: ThreadMode::Parallel,
+    secret: &[],
+    ad: &[],
+    hash_length: 32,
+};
 
 fn generate_salt() -> String {
     let salt: String = thread_rng().sample_iter(&Alphanumeric).take(32).collect();
@@ -25,9 +37,11 @@ fn generate_salt() -> String {
 }
 
 pub fn create_hash(password: &str) -> ServiceResult<String> {
-    let config = Config::default();
+    let mut config = Config::default();
+    config.thread_mode = ThreadMode::Parallel;
     let salt = generate_salt();
-    let hash = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config)?;
+    let hash =
+        argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), ARGON2_CONFIG)?;
     Ok(hash)
 }
 
@@ -38,6 +52,7 @@ pub fn verify(hash: &str, password: &str) -> ServiceResult<()> {
         Err(ServiceError::AuthorizationRequired)
     }
 }
+
 #[cfg(test)]
 mod tests {
 

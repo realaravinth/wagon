@@ -26,6 +26,8 @@ use actix_web::{
     web, App, HttpServer,
 };
 
+use actix_http::KeepAlive;
+
 use openssl::ssl::{SslConnector, SslMethod};
 use regex::Regex;
 
@@ -38,6 +40,7 @@ mod handlers;
 mod payload;
 mod routes;
 mod utils;
+mod settings;
 
 use crate::utils::filters::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
 
@@ -94,6 +97,9 @@ async fn main() -> io::Result<()> {
             )
             .configure(routes)
     })
+//    .keep_alive(KeepAlive::Os)
+    .client_timeout(0)
+    .backlog(1204)
     .bind(endpoint)?
     .run()
     .await

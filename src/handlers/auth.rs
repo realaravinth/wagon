@@ -16,6 +16,7 @@
 
 use actix_identity::Identity;
 use actix_web::{web, web::Json, Error, HttpResponse, Responder};
+use actix_http::http::header;
 
 use crate::errors::*;
 use crate::payload::organisation::{LoginCreds, RegisterCreds};
@@ -24,8 +25,11 @@ use crate::utils::{
 };
 
 pub async fn sign_up(creds: Json<RegisterCreds>) -> ServiceResult<HttpResponse> {
-    let new_creds = create_new_organisation(creds.into_inner())?;
-    Ok(HttpResponse::Ok().finish())
+let _ =      web::block(move || {
+        create_new_organisation(creds.into_inner())
+    }).await?;
+
+    Ok(HttpResponse::Ok().set_header(header::CONNECTION, "close").finish())
 }
 
 pub async fn sign_in(

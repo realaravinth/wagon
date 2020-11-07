@@ -23,6 +23,7 @@ use crate::utils::filters::{beep, filter, forbidden};
 
 pub fn create_new_organisation(creds: RegisterCreds) -> ServiceResult<RegisterCreds> {
     let normalised_username = &creds.username.to_lowercase().nfc().collect::<String>();
+
     filter(&normalised_username)?;
     forbidden(&normalised_username)?;
 
