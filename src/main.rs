@@ -24,6 +24,8 @@ use actix_web::{
     client::{Client, Connector},
     middleware::{Compress, Logger},
     web, App, HttpServer,
+    error::InternalError,
+    http::StatusCode,
 };
 
 use actix_http::KeepAlive;
@@ -40,7 +42,6 @@ mod handlers;
 mod payload;
 mod routes;
 mod utils;
-mod settings;
 
 use crate::utils::filters::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
 
@@ -72,7 +73,9 @@ lazy_static! {
 async fn main() -> io::Result<()> {
     use crate::routes::routes;
     env::set_var("RUST_LOG", "actix_web=info");
+
     pretty_env_logger::init();
+//    static_init();
 
     //    let database_connection_pool = get_connection_pool(&DATABASE_URL);
 
@@ -82,6 +85,13 @@ async fn main() -> io::Result<()> {
     HttpServer::new(move || {
         App::new()
             //           .data(database_connection_pool.clone())
+            .app_data(
+                web::JsonConfig::default().error_handler(|err, _| {
+                    debug!("JSON deserialization error: {:?}", &err);
+                    InternalError::new(err, StatusCode::BAD_REQUEST).into()
+                }),
+            )
+
             .wrap(Compress::default())
             .wrap(Logger::default())
             .data(
@@ -103,6 +113,18 @@ async fn main() -> io::Result<()> {
     .bind(endpoint)?
     .run()
     .await
+}
+
+#[cfg(not(tarpaulin_include))]
+fn static_init(){
+    use lazy_static::initialize;
+
+    info!("Initializing statics...");
+    initialize(&RE_USERNAME_CASE_MAPPED);
+    initialize(&RE_PROFAINITY);
+    initialize(&RE_BLACKLIST);
+
+    info!("Initialized statics");
 }
 
 #[cfg(test)]

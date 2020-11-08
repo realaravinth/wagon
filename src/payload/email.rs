@@ -26,7 +26,7 @@ pub struct Email {
 }
 
 impl Email {
-    fn new(email_id: &str) -> ServiceResult<Self> {
+    pub fn new(email_id: &str) -> ServiceResult<Self> {
         let email = Email {
             email_id: email_id.to_owned(),
         };

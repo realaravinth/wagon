@@ -15,10 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use serde::{Deserialize, Serialize};
+use unicode_normalization::UnicodeNormalization;
 use validator::Validate;
 use validator_derive::Validate;
 
 use crate::errors::*;
+use crate::utils::create_organisation::create_hash;
+use crate::utils::filters::{beep, filter, forbidden};
+
+#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+pub struct Unvalidated_RegisterCreds {
+    pub username: String,
+    pub email_id: String,
+    pub password: String,
+}
 
 #[derive(Debug, Default, Clone, PartialEq, Validate, Deserialize, Serialize)]
 pub struct RegisterCreds {
@@ -28,29 +38,53 @@ pub struct RegisterCreds {
     pub password: String,
 }
 
+impl From<Unvalidated_RegisterCreds> for ServiceResult<RegisterCreds> {
+    fn from(u_creds: Unvalidated_RegisterCreds) -> ServiceResult<RegisterCreds> {
+        let creds = RegisterCreds::new()
+            .set_email(&u_creds.email_id)?
+            .set_username(&u_creds.username)
+            .validate_fields()?
+            .set_password(&u_creds.password)?
+            .build();
+        Ok(creds)
+    }
+}
+
 impl RegisterCreds {
-    pub fn new() -> Self {
+    fn new() -> Self {
         let registered_creds: RegisterCreds = Default::default();
         registered_creds
     }
 
-    pub fn set_username<'a>(&'a mut self, username: &str) -> &'a mut Self {
-        self.username = username.trim().to_owned();
+    fn set_username<'a>(&'a mut self, username: &str) -> &'a mut Self {
+        self.username = username
+            .to_lowercase()
+            .nfc()
+            .collect::<String>()
+            .trim()
+            .to_owned();
         self
     }
 
-    pub fn set_email<'a>(&'a mut self, email_id: &str) -> ServiceResult<&'a mut Self> {
+    fn set_email<'a>(&'a mut self, email_id: &str) -> ServiceResult<&'a mut Self> {
         self.email_id = email_id.trim().to_owned();
         self.validate()?;
         Ok(self)
     }
 
-    pub fn set_password<'a>(&'a mut self, password: &str) -> &'a mut Self {
-        self.password = password.to_owned();
-        self
+    fn validate_fields<'a>(&'a mut self) -> ServiceResult<&'a mut Self> {
+        filter(&self.username)?;
+        forbidden(&self.username)?;
+        beep(&self.username)?;
+        Ok(self)
     }
 
-    pub fn build(&mut self) -> Self {
+    fn set_password<'a>(&'a mut self, password: &str) -> ServiceResult<&'a mut Self> {
+        self.password = create_hash(&password)?;
+        Ok(self)
+    }
+
+    fn build(&mut self) -> Self {
         self.to_owned()
     }
 }
@@ -63,13 +97,15 @@ mod tests {
     fn utils_register_builer() {
         let registered_creds = RegisterCreds::new()
             .set_password("password")
+            .unwrap()
             .set_username("realaravinth")
             .set_email("batman@we.net")
+            .unwrap()
+            .validate_fields()
             .unwrap()
             .build();
 
         assert_eq!(registered_creds.username, "realaravinth");
-        assert_eq!(registered_creds.password, "password");
         assert_eq!(registered_creds.email_id, "batman@we.net");
     }
 
@@ -77,11 +113,49 @@ mod tests {
     fn utils_register_email_err() {
         let mut email_err = RegisterCreds::new()
             .set_password("password")
+            .unwrap()
             .set_username("realaravinth")
             .build();
         assert_eq!(
             email_err.set_email("sdfasdf"),
             Err(ServiceError::NotAnEmail)
+        );
+    }
+
+    #[test]
+    fn utils_create_new_organisation() {
+        let org = RegisterCreds::new()
+            .set_email("batman@we.net")
+            .unwrap()
+            .set_username("Realaravinth")
+            .validate_fields()
+            .unwrap()
+            .set_password("adfdfs")
+            .unwrap()
+            .build();
+
+        assert_eq!(org.username, "realaravinth");
+    }
+
+    #[test]
+    fn utils_create_new_profane_organisation() {
+        let mut profane_org = RegisterCreds::new();
+        profane_org.set_username("fuck");
+
+        assert_eq!(
+            profane_org.validate_fields(),
+            Err(ServiceError::UsernameError)
+        );
+    }
+
+    #[test]
+    fn utils_create_new_forbidden_organisation() {
+        let mut forbidden_org =
+            RegisterCreds::new().set_username("htaccessasnc").build();
+
+        assert_eq!(
+            forbidden_org.validate_fields(),
+            Err(ServiceError::UsernameError)
         );
     }
 }

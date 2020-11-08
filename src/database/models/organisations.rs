@@ -60,22 +60,18 @@ impl Organisations {
 mod tests {
     use super::*;
 
-    use crate::utils::create_organisation::create_new_organisation;
-
     #[test]
     fn models_organisations() {
         let description = "Free software alternatives to google services";
         let organisation_name = "Shuttlecraft";
-        let creds = RegisterCreds::new()
-            .set_email("root@shuttlecraft.io")
-            .unwrap()
-            .set_password("password")
-            .set_username("Shuttlecraft")
-            .build();
-        let rcreds = create_new_organisation(creds).unwrap();
-        let registered_creds = rcreds.clone();
+        let creds = RegisterCreds {
+            email_id: "root@shuttlecraft.io".to_owned(),
+            password: "password".to_owned(),
+            username: "Shuttlecraft".to_owned(),
+        };
+        let registered_creds = creds.clone();
 
-        let mut org: Organisations = rcreds.into();
+        let mut org: Organisations = creds.into();
 
         assert_eq!(
             org.email, registered_creds.email_id,

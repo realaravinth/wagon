@@ -18,4 +18,4 @@ mod login;
 mod register;
 
 pub use login::LoginCreds;
-pub use register::RegisterCreds;
+pub use register::{RegisterCreds, Unvalidated_RegisterCreds};

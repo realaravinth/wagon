@@ -19,16 +19,15 @@ use actix_web::{web, web::Json, Error, HttpResponse, Responder};
 use actix_http::http::header;
 
 use crate::errors::*;
-use crate::payload::organisation::{LoginCreds, RegisterCreds};
-use crate::utils::{
-    create_organisation::create_new_organisation, send_email::send_verification,
-};
+use crate::payload::organisation::{LoginCreds, Unvalidated_RegisterCreds, RegisterCreds};
+use crate::utils:: send_email::send_verification ;
 
-pub async fn sign_up(creds: Json<RegisterCreds>) -> ServiceResult<HttpResponse> {
-let _ =      web::block(move || {
-        create_new_organisation(creds.into_inner())
-    }).await?;
+pub async fn sign_up(creds: Json<Unvalidated_RegisterCreds>) -> ServiceResult<HttpResponse> {
+    debug!("inside auth::signup");
 
+    let r_creds: ServiceResult<RegisterCreds> = creds.into_inner().into();
+    let creds = r_creds?;
+    
     Ok(HttpResponse::Ok().set_header(header::CONNECTION, "close").finish())
 }
 
@@ -54,19 +53,18 @@ mod tests {
 
     #[actix_rt::test]
     async fn test_signup_success() {
-        let creds = RegisterCreds::new()
-            .set_password("password")
-            .set_username("Realaravinth")
-            .set_email("batman@we.net")
-            .unwrap()
-            .build();
+        let creds = Unvalidated_RegisterCreds{
+            password: "password".to_owned(),
+            username: "Realaravinth".to_owned(),
+            email_id: "batman@we.net".to_owned()
+        };
 
         let resp = sign_up(Json(creds)).await.unwrap();
         assert_eq!(resp.status(), http::StatusCode::OK);
     }
     #[actix_rt::test]
     async fn test_signup_email_faliure() {
-        let email_err = RegisterCreds {
+        let email_err = Unvalidated_RegisterCreds {
             username: "realaravinth".to_owned(),
             email_id: "sdfada".to_owned(),
             password: "password".to_owned(),

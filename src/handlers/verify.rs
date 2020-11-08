@@ -19,9 +19,7 @@ use actix_web::{client::Client, web, web::Json, Error, HttpResponse, Responder};
 
 use crate::errors::*;
 use crate::payload::email::Email;
-use crate::utils::{
-    create_organisation::create_new_organisation, send_email::send_verification,
-};
+use crate::utils::send_email::send_verification;
 
 pub async fn get_subscriber(
     some_data: web::Json<Email>,

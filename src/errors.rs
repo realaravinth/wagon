@@ -72,7 +72,7 @@ impl ResponseError for ServiceError {
             ServiceError::BadRequest => StatusCode::BAD_REQUEST,
             ServiceError::Timeout => StatusCode::GATEWAY_TIMEOUT,
             ServiceError::UnableToConnectToDb => StatusCode::INTERNAL_SERVER_ERROR,
-            ServiceError::NotAnEmail => StatusCode::METHOD_NOT_ALLOWED,
+            ServiceError::NotAnEmail => StatusCode::BAD_REQUEST,
         }
     }
 }
@@ -84,25 +84,25 @@ impl From<BlockingError<ServiceError>> for ServiceError {
 }
 
 impl From<actix_http::Error> for ServiceError {
-    fn from(error: actix_http::Error) -> ServiceError {
+    fn from(_: actix_http::Error) -> ServiceError {
         ServiceError::InternalServerError
     }
 }
 
 impl From<argon2::Error> for ServiceError {
-    fn from(error: argon2::Error) -> ServiceError {
+    fn from(_: argon2::Error) -> ServiceError {
         ServiceError::InternalServerError
     }
 }
 
 impl From<ValidationErrors> for ServiceError {
-    fn from(error: ValidationErrors) -> ServiceError {
+    fn from(_: ValidationErrors) -> ServiceError {
         ServiceError::NotAnEmail
     }
 }
 
 impl From<oneshot::error::RecvError> for ServiceError {
-    fn from(error: oneshot::error::RecvError) -> ServiceError {
+    fn from(_: oneshot::error::RecvError) -> ServiceError {
         ServiceError::InternalServerError
     }
 }
