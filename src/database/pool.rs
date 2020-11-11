@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::WAGON_PG_POOL_SIZE;
+//use crate::WAGON_PG_POOL_SIZE;
 //use diesel::prelude::*;
 //use diesel::r2d2::{self, ConnectionManager};
 //

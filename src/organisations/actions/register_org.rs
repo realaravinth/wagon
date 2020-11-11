@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-use crate::database::models::Organisations;
+use super::models::Organisation;
 use crate::errors::*;
 
-//pub fn insert_new_user(payload: RegisterRequestPayload, conn: &PgConnection) -> ServiceResult<()> {
+//use tokio_postgres::PgConnection;
+//
+//pub fn add_organisation(
+//    payload: Organisation,
+//    conn: &PgConnection,
+//) -> ServiceResult<()> {
 //    use crate::schema::users::dsl::*;
 //    let insertable: InsertableUser = payload.into();
 //    diesel::insert_into(users)

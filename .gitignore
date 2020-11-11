@@ -1,3 +1,4 @@
 /target
 /payload
 tarpaulin-report.html
+config/development.toml

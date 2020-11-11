@@ -9,10 +9,13 @@
 
 </div>
 
-**Wagon** is a membership management platform. Users can 
+### STATUS: Active development (fancy word for unusable)
+
+**Wagon** is a membership management platform. Users can
 advertise their groups for people to join them.
 
 ### Motivation
+
 Currently, we are focussing on building a platform to collect members'
 emails but we plan on expanding to provide a [free
 software](https://www.gnu.org/philosophy/free-sw.html) alternative to
@@ -42,22 +45,37 @@ $ cd wagon && cargo build
 
 #### Configuration:
 
-Wagon expects the following environment variables to be set:
+Wagon is highly configurable. 
+Configuration is applied/merged in the following order:
 
-| Name                 | Value                 | Explanation                                                              |
-| -------------------- | --------------------- | ------------------------------------------------------------------------ |
-| `WAGON_SMTP_API_KEY` | API key               | API key of your SMTP provider\*                                          |
-| `DATABASE_URL`       | Postgres database url | database url in `postgres://username:password@host/database_name` format |
-| `WAGON_PG_POOL_SIZE` | integer               | postgres database connection pool size                                   |
-| `WAGON_RD_URL`       | Redis URL             | Redis database URL                                                       |
+1. `config/default.toml`
+2. `config/$WAGON_MODE.toml`
+3. environment variables.
 
-*we rely [SMTP2Go's](https://www.smtp2go.com/) HTTP API to send emails.
+##### Environment variables:
+
+| Name                         | Value                                                       |
+| ---------------------------- | ----------------------------------------------------------- |
+| `WAGON_MODE`                 | Run mode for choosing configuration(development/production) |
+| `WAGON_SMTP_KEY`             | API key                                                     |
+| `WAGON_POSTGRES_PASSWORD`    | Postgres password                                           |
+| `WAGON_POSTGRES_NAME`        | Postgres database name                                      |
+| `WAGON_POSTGRES_PORT`        | Postgres port                                               |
+| `WAGON_POSTGRES_HOSTNAME`    | Postgres hostmane                                           |
+| `WAGON_POSTGRES_USERNAME`    | Postgres username                                           |
+| `WAGON_POSTGRES_POOL`        | Postgres database connection pool size                      |
+| `WAGON_PORT` (or) `PORT`\*\* | The port on which you want wagon to listen to               |
+| `WAGON_IP`                   | The IP address on which you want wagon to listen to         |
+
+\*we rely [SMTP2Go's](https://www.smtp2go.com/) HTTP API to send emails.
 This will change when the author comes into some money and sets up their
 own email server.
 
+\*\*Heroku uses `$PORT`, we got you covered :)
 
 ### Credits:
-Logo  made by <a href="https://smashicons.com/"
+
+Logo made by <a href="https://smashicons.com/"
 title="Smashicons">Smashicons</a> from <a
 href="https://www.flaticon.com/" title="Flaticon">
 www.flaticon.com</a>. Do check them out!

@@ -22,6 +22,7 @@ use actix_web::{
     HttpResponse,
 };
 //use diesel::result::Error as DBError;
+use config::ConfigError;
 use failure::Fail;
 use serde::{Deserialize, Serialize};
 use tokio::sync::oneshot;
@@ -103,6 +104,12 @@ impl From<ValidationErrors> for ServiceError {
 
 impl From<oneshot::error::RecvError> for ServiceError {
     fn from(_: oneshot::error::RecvError) -> ServiceError {
+        ServiceError::InternalServerError
+    }
+}
+
+impl From<ConfigError> for ServiceError {
+    fn from(_: ConfigError) -> ServiceError {
         ServiceError::InternalServerError
     }
 }

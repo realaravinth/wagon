@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use serde::{Deserialize, Serialize};
+use tokio_pg_mapper_derive::PostgresMapper;
 
 use super::payload::RegisterCreds;
 
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct Organisations {
+#[pg_mapper(table = "organisations")]
+#[derive(Debug, PostgresMapper, PartialEq, Clone, Serialize, Deserialize)]
+pub struct Organisation {
     pub organisation_username: String,
     pub email: String,
     pub password: String,
@@ -29,9 +31,9 @@ pub struct Organisations {
 }
 
 // set email_verified only when organisation_name, description and email is verified
-impl From<RegisterCreds> for Organisations {
+impl From<RegisterCreds> for Organisation {
     fn from(creds: RegisterCreds) -> Self {
-        Organisations {
+        Organisation {
             email: creds.email_id,
             organisation_username: creds.username,
             password: creds.password,
@@ -42,7 +44,7 @@ impl From<RegisterCreds> for Organisations {
     }
 }
 
-impl Organisations {
+impl Organisation {
     pub fn set_description(&mut self, description: &str) {
         self.description = Some(description.to_owned());
     }
@@ -71,7 +73,7 @@ mod tests {
         };
         let registered_creds = creds.clone();
 
-        let mut org: Organisations = creds.into();
+        let mut org: Organisation = creds.into();
 
         assert_eq!(
             org.email, registered_creds.email_id,

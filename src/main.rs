@@ -41,30 +41,19 @@ mod errors;
 mod organisations;
 mod verification;
 mod subscribers;
+mod settings;
 
 use crate::organisations::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
+use crate::settings::Settings;
 
 lazy_static! {
-    pub static ref WAGON_SMTP_API_KEY: String = env::var("WAGON_SMTP_API_KEY")
-        .expect("Please set WAGON_SMTP_API_KEY to your SMTP API key");
-    pub static ref DATABASE_URL: String = env::var("DATABASE_URL")
-        .expect("Please set DATABASE_URL to your postgres instance");
-    pub static ref WAGON_PG_POOL_SIZE: u32 = env::var("WAGON_PG_POOL_SIZE")
-        .expect("Please set WAGON_PG_POOL_SIZE to your postgres instance")
-        .parse()
-        .expect("Couldn't convert WAGON_PG_POOL_SIZE to integer");
-    pub static ref PORT: u32 = env::var("PORT")
-        .expect("Please set PORT to the port that you wish to listen to")
-        .parse()
-        .expect("Couldn't convert port into an integer");
-    pub static ref WAGON_RD_URL: String = env::var("WAGON_RD_URL")
-        .expect("Please set WAGON_RD_URL to your Redis instance");
-    pub static ref RE_BLACKLIST: Regex =
+   pub static ref RE_BLACKLIST: Regex =
         Regex::new(BLACKLIST).expect("couldn't setup blacklist list filter");
     pub static ref RE_PROFAINITY: Regex =
         Regex::new(PROFAINITY).expect("coudln't setup profainity filter");
     pub static ref RE_USERNAME_CASE_MAPPED: Regex = Regex::new(USERNAME_CASE_MAPPED)
         .expect("coudln't setup username case mapped filter");
+    pub static ref SETTINGS: Settings = Settings::new().expect("couldn't load settings");
 }
 
 #[actix_web::main]
@@ -77,7 +66,7 @@ async fn main() -> io::Result<()> {
 
     //    let database_connection_pool = get_connection_pool(&DATABASE_URL);
 
-    let endpoint = format!("0.0.0.0:{}", *PORT);
+    let endpoint = format!("{}:{}", &SETTINGS.server.ip, &SETTINGS.server.port);
     println!("Starting server at: {:?}", endpoint);
 
     HttpServer::new(move || {
@@ -126,25 +115,25 @@ fn static_init(){
     info!("Initialized statics");
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn set_vars() {
-        env::set_var("WAGON_SMTP_API_KEY", "testing");
-        env::set_var("DATABASE_URL", "testing");
-        env::set_var("WAGON_PG_POOL_SIZE", "20");
-        env::set_var("PORT", "20");
-        env::set_var("WAGON_RD_URL", "testing");
-    }
-
-    #[test]
-    fn test_env_vars() {
-        set_vars();
-        assert_eq!(*WAGON_RD_URL, "testing");
-        assert_eq!(*WAGON_SMTP_API_KEY, "testing");
-        assert_eq!(*DATABASE_URL, "testing");
-        assert_eq!(*PORT, 20);
-        assert_eq!(*WAGON_PG_POOL_SIZE, 20);
-    }
-}
+//#[cfg(test)]
+//mod tests {
+//    use super::*;
+//
+//    fn set_vars() {
+//        env::set_var("WAGON_SMTP_API_KEY", "testing");
+//        env::set_var("DATABASE_URL", "testing");
+//        env::set_var("WAGON_PG_POOL_SIZE", "20");
+//        env::set_var("PORT", "20");
+//        env::set_var("WAGON_RD_URL", "testing");
+//    }
+//
+//    #[test]
+//    fn test_env_vars() {
+//        set_vars();
+//        assert_eq!(*WAGON_RD_URL, "testing");
+//        assert_eq!(*WAGON_SMTP_API_KEY, "testing");
+//        assert_eq!(*DATABASE_URL, "testing");
+//        assert_eq!(*PORT, 20);
+//        assert_eq!(*WAGON_PG_POOL_SIZE, 20);
+//    }
+//}
