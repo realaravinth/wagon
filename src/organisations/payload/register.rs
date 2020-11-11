@@ -19,9 +19,9 @@ use unicode_normalization::UnicodeNormalization;
 use validator::Validate;
 use validator_derive::Validate;
 
+use super::create_hash;
+use super::{beep, filter, forbidden};
 use crate::errors::*;
-use crate::utils::create_organisation::create_hash;
-use crate::utils::filters::{beep, filter, forbidden};
 
 #[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Unvalidated_RegisterCreds {

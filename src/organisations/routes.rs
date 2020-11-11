@@ -13,7 +13,15 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+use super::handlers::*;
+use actix_web::web;
 
-pub mod email;
-pub mod organisation;
-pub mod smtp_payload;
+#[cfg(not(tarpaulin_include))]
+pub fn routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(
+        web::scope("/api/")
+            .route("signin/", web::post().to(sign_in))
+            .route("signup/", web::post().to(sign_up))
+            .route("logout/", web::get().to(sign_out)),
+    );
+}

@@ -14,23 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use crate::errors::*;
-use serde::{Deserialize, Serialize};
-use validator::Validate;
-use validator_derive::Validate;
+mod handlers;
+mod payload;
+mod routes;
+mod utils;
 
-#[derive(Debug, Validate, Deserialize, Serialize)]
-pub struct Email {
-    #[validate(email)]
-    email_id: String,
-}
-
-impl Email {
-    pub fn new(email_id: &str) -> ServiceResult<Self> {
-        let email = Email {
-            email_id: email_id.to_owned(),
-        };
-        email.validate()?;
-        Ok(email)
-    }
-}
+pub use routes::routes;
+pub use utils::send_verification;

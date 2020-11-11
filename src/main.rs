@@ -38,12 +38,11 @@ use std::io;
 
 mod database;
 mod errors;
-mod handlers;
-mod payload;
-mod routes;
-mod utils;
+mod organisations;
+mod verification;
+mod subscribers;
 
-use crate::utils::filters::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
+use crate::organisations::{BLACKLIST, PROFAINITY, USERNAME_CASE_MAPPED};
 
 lazy_static! {
     pub static ref WAGON_SMTP_API_KEY: String = env::var("WAGON_SMTP_API_KEY")
@@ -71,7 +70,6 @@ lazy_static! {
 #[actix_web::main]
 #[cfg(not(tarpaulin_include))]
 async fn main() -> io::Result<()> {
-    use crate::routes::routes;
     env::set_var("RUST_LOG", "actix_web=info");
 
     pretty_env_logger::init();
@@ -105,7 +103,8 @@ async fn main() -> io::Result<()> {
                     )
                     .finish(),
             )
-            .configure(routes)
+            .configure(organisations::routes)
+            .configure(verification::routes)
     })
 //    .keep_alive(KeepAlive::Os)
     .client_timeout(0)

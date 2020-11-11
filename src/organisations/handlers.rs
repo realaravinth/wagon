@@ -19,8 +19,8 @@ use actix_web::{web, web::Json, Error, HttpResponse, Responder};
 use actix_http::http::header;
 
 use crate::errors::*;
-use crate::payload::organisation::{LoginCreds, Unvalidated_RegisterCreds, RegisterCreds};
-use crate::utils:: send_email::send_verification ;
+use super::payload::{LoginCreds, Unvalidated_RegisterCreds, RegisterCreds};
+use crate::verification::send_verification ;
 
 pub async fn sign_up(creds: Json<Unvalidated_RegisterCreds>) -> ServiceResult<HttpResponse> {
     debug!("inside auth::signup");

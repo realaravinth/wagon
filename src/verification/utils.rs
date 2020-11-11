@@ -16,7 +16,7 @@
 
 use futures::StreamExt;
 
-use crate::payload::{email::Email, smtp_payload::SMTP2goResponse};
+use super::payload::{Email, SMTP2goResponse};
 use actix_web::{client::Client, error::ErrorBadRequest, web::BytesMut, Error};
 use validator::Validate;
 

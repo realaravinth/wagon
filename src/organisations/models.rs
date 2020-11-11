@@ -16,7 +16,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::payload::organisation::RegisterCreds;
+use super::payload::RegisterCreds;
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Organisations {

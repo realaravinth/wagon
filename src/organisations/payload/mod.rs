@@ -14,17 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use actix_identity::Identity;
-use actix_web::{client::Client, web, web::Json, Error, HttpResponse, Responder};
+mod login;
+mod register;
 
-use crate::errors::*;
-use crate::payload::email::Email;
-use crate::utils::send_email::send_verification;
-
-pub async fn get_subscriber(
-    some_data: web::Json<Email>,
-    client: web::Data<Client>,
-) -> Result<HttpResponse, Error> {
-    send_verification(some_data.into_inner(), &client).await?;
-    Ok(HttpResponse::Ok().finish())
-}
+use super::utils::create_hash;
+use super::utils::{beep, filter, forbidden};
+pub use login::LoginCreds;
+pub use register::{RegisterCreds, Unvalidated_RegisterCreds};

@@ -14,20 +14,5 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use serde::{Deserialize, Serialize};
-
-use std::collections::HashMap;
-
-#[derive(Debug, Deserialize)]
-pub struct SMTP2goResponse {
-    pub request_id: String,
-    pub data: SMTP2goData,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct SMTP2goData {
-    pub succeeded: i32,
-    pub failed: i32,
-    failures: HashMap<String, String>,
-    pub email_id: String,
-}
+mod models;
+pub use models::Subscribers;

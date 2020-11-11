@@ -13,6 +13,11 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-mod hashify;
+use super::handlers::*;
+use super::handlers::*;
+use actix_web::web;
 
-pub use hashify::{create_hash, verify};
+#[cfg(not(tarpaulin_include))]
+pub fn routes(cfg: &mut web::ServiceConfig) {
+    cfg.service(web::scope("/api/").route("ubscriver/", web::post().to(get_subscriber)));
+}

@@ -14,6 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-pub(crate) mod create_organisation;
-pub(crate) mod filters;
-pub mod send_email;
+use actix_identity::Identity;
+use actix_web::{client::Client, web, web::Json, Error, HttpResponse, Responder};
+
+use crate::errors::*;
+use super::payload::Email;
+use super::utils::send_verification;
+
+pub async fn get_subscriber(
+    some_data: web::Json<Email>,
+    client: web::Data<Client>,
+) -> Result<HttpResponse, Error> {
+    send_verification(some_data.into_inner(), &client).await?;
+    Ok(HttpResponse::Ok().finish())
+}

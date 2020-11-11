@@ -13,15 +13,11 @@
 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-use actix_web::web;
 
-#[cfg(not(tarpaulin_include))]
-pub fn routes(cfg: &mut web::ServiceConfig) {
-    use crate::handlers::*;
-    cfg.service(
-        web::scope("/api/")
-            .route("signin/", web::post().to(sign_in))
-            .route("signup/", web::post().to(sign_up))
-            .route("logout/", web::get().to(sign_out)),
-    );
-}
+mod filters;
+mod hashify;
+
+pub use filters::{beep, PROFAINITY};
+pub use filters::{filter, USERNAME_CASE_MAPPED};
+pub use filters::{forbidden, BLACKLIST};
+pub use hashify::{create_hash, verify};
