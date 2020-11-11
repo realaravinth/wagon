@@ -25,10 +25,9 @@ use crate::utils:: send_email::send_verification ;
 pub async fn sign_up(creds: Json<Unvalidated_RegisterCreds>) -> ServiceResult<HttpResponse> {
     debug!("inside auth::signup");
 
-    let r_creds: ServiceResult<RegisterCreds> = creds.into_inner().into();
-    let creds = r_creds?;
-    
-    Ok(HttpResponse::Ok().set_header(header::CONNECTION, "close").finish())
+    let processed_creds = creds.into_inner().process()?;
+
+    Ok(HttpResponse::Ok().finish())
 }
 
 pub async fn sign_in(

@@ -38,19 +38,28 @@ pub struct RegisterCreds {
     pub password: String,
 }
 
-impl From<Unvalidated_RegisterCreds> for ServiceResult<RegisterCreds> {
-    fn from(u_creds: Unvalidated_RegisterCreds) -> ServiceResult<RegisterCreds> {
+impl Unvalidated_RegisterCreds {
+    pub fn process(&self) -> ServiceResult<RegisterCreds> {
         let creds = RegisterCreds::new()
-            .set_email(&u_creds.email_id)?
-            .set_username(&u_creds.username)
+            .set_email(&self.email_id)?
+            .set_username(&self.username)
             .validate_fields()?
-            .set_password(&u_creds.password)?
+            .set_password(&self.password)?
             .build();
         Ok(creds)
     }
 }
 
 impl RegisterCreds {
+    //    pub fn create_register_creds<'a>(&'a mut self) -> ServiceResult<Self> {
+    //        let creds = RegisterCreds::new()
+    //            .set_email(&u_creds.email_id)?
+    //            .set_username(&u_creds.username)
+    //            .validate_fields()?
+    //            .set_password(&u_creds.password)?
+    //            .build();
+    //        Ok(creds)
+    //    }
     fn new() -> Self {
         let registered_creds: RegisterCreds = Default::default();
         registered_creds
